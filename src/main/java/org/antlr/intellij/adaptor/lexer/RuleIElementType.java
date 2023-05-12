@@ -19,9 +19,17 @@ public class RuleIElementType extends IElementType {
 
 	public RuleIElementType(int ruleIndex,
 	                        @NotNull @NonNls String debugName,
-	                        @Nullable Language language)
+	                        @Nullable Language language,boolean register)
 	{
-		super(debugName, language);
+		super(debugName, language,register);
+		this.ruleIndex = ruleIndex;
+	}
+
+	public RuleIElementType(int ruleIndex,
+							@NotNull @NonNls String debugName,
+							@Nullable Language language)
+	{
+		super(debugName, language,false);
 		this.ruleIndex = ruleIndex;
 	}
 

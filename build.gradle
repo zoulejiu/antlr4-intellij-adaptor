@@ -21,8 +21,8 @@ apply plugin: 'java'
 apply plugin: 'org.jetbrains.intellij'
 
 compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
 }
 
 intellij {
@@ -52,6 +52,8 @@ task javadocJar(type: Jar) {
     from javadoc
     archiveClassifier.set('javadoc')
 }
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
 
 publishing {
     publications {
@@ -90,20 +92,20 @@ publishing {
 
         }
     }
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/${libraryVersion.contains("-SNAPSHOT") ? 'content/repositories/snapshots' : 'service/local/staging/deploy/maven2'}"
-            credentials {
-                username sonatypeUsername
-                password sonatypePassword
-            }
-        }
-    }
+//    repositories {
+//        maven {
+//            url "https://oss.sonatype.org/${libraryVersion.contains("-SNAPSHOT") ? 'content/repositories/snapshots' : 'service/local/staging/deploy/maven2'}"
+//            credentials {
+//                username sonatypeUsername
+//                password sonatypePassword
+//            }
+//        }
+//    }
 }
 
-signing {
-    sign publishing.publications.maven
-}
+//signing {
+//    sign publishing.publications.maven
+//}
 
 
 javadoc {
