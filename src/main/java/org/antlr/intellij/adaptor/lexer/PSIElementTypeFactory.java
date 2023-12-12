@@ -91,7 +91,7 @@ public class PSIElementTypeFactory {
 			elementTypes[i] = new RuleIElementType(i, ruleNames[i], language);
 		}
 
-		result = Collections.unmodifiableList(Arrays.asList(elementTypes));
+		result = List.of(elementTypes);
 		return result;
 	}
 
