@@ -83,8 +83,22 @@ public class ANTLRParseTreeToPSIConverter implements ParseTreeListener {
 
 	@Override
 	public void visitTerminal(TerminalNode node) {
-		builder.advanceLexer();
+//		builder.advanceLexer();
+		int nodeStartIndex = node.getSymbol().getStartIndex();
+		if(!tokenToErrorMap.containsKey(nodeStartIndex)) {
+			builder.advanceLexer();
+			return;
+		}
+		SyntaxError error = tokenToErrorMap.get(nodeStartIndex);
+		if (error != null) {
+			PsiBuilder.Marker errorMarker = builder.mark();
+			builder.advanceLexer();
+			errorMarker.error(error.getMessage());
+		} else {
+			builder.advanceLexer();
+		}
 	}
+
 
 	/** Summary. For any syntax error thrown by the parser, there will be an
 	 *  ErrorNode in the parse tree and this method will process it.
@@ -161,15 +175,15 @@ public class ANTLRParseTreeToPSIConverter implements ParseTreeListener {
 	public void exitEveryRule(ParserRuleContext ctx) {
 		ProgressIndicatorProvider.checkCanceled();
 		PsiBuilder.Marker marker = markers.pop();
-		if (ctx.exception != null) {
-			SyntaxError error = syntaxErrors.get(ctx.exception);
-			if (error != null) {
-				marker.error(error.getMessage());
-			} else {
-				marker.done(getRuleElementTypes().get(ctx.getRuleIndex()));
-			}
-		} else {
+//		if (ctx.exception != null) {
+//			SyntaxError error = syntaxErrors.get(ctx.exception);
+//			if (error != null) {
+//				marker.error(error.getMessage());
+//			} else {
+//				marker.done(getRuleElementTypes().get(ctx.getRuleIndex()));
+//			}
+//		} else {
 			marker.done(getRuleElementTypes().get(ctx.getRuleIndex()));
-		}
+//		}
 	}
 }
