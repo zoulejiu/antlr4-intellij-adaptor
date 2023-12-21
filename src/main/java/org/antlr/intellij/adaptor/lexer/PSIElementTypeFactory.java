@@ -104,7 +104,9 @@ public class PSIElementTypeFactory {
 				elementTypes[i] = getEofElementType(language);
 			}
 			else {
-				elementTypes[i] = tokenIElementTypes.get(types[i]);
+				if(tokenIElementTypes!=null && tokenIElementTypes.size()-1>=types[i]){
+					elementTypes[i] = tokenIElementTypes.get(types[i]);
+				}
 			}
 		}
 
