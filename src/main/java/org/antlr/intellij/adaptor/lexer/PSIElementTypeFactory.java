@@ -38,7 +38,17 @@ public class PSIElementTypeFactory {
 	{
 		synchronized (PSIElementTypeFactory.class) {
 			tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary));
-			ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames));
+			ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames,false));
+			tokenNamesCache.computeIfAbsent(language, l -> createTokenTypeMap(vocabulary));
+			ruleNamesCache.computeIfAbsent(language, l -> createRuleIndexMap(ruleNames));
+		}
+	}
+
+	public static void defineLanguageIElementTypes(Language language, Vocabulary vocabulary, String[] ruleNames,boolean register)
+	{
+		synchronized (PSIElementTypeFactory.class) {
+			tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary));
+			ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames,register));
 			tokenNamesCache.computeIfAbsent(language, l -> createTokenTypeMap(vocabulary));
 			ruleNamesCache.computeIfAbsent(language, l -> createRuleIndexMap(ruleNames));
 		}
@@ -84,11 +94,11 @@ public class PSIElementTypeFactory {
 	}
 
 	@NotNull
-	public static List<RuleIElementType> createRuleIElementTypes(Language language, String[] ruleNames) {
+	public static List<RuleIElementType> createRuleIElementTypes(Language language, String[] ruleNames,boolean register) {
 		List<RuleIElementType> result;
 		RuleIElementType[] elementTypes = new RuleIElementType[ruleNames.length];
 		for (int i = 0; i < ruleNames.length; i++) {
-			elementTypes[i] = new RuleIElementType(i, ruleNames[i], language);
+			elementTypes[i] = new RuleIElementType(i, ruleNames[i], language,register);
 		}
 
 		result = List.of(elementTypes);
