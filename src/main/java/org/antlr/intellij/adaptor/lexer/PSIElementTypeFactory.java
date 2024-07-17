@@ -37,7 +37,7 @@ public class PSIElementTypeFactory {
 	public static void defineLanguageIElementTypes(Language language, Vocabulary vocabulary, String[] ruleNames)
 	{
 		synchronized (PSIElementTypeFactory.class) {
-			tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary));
+			tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary,false));
 			ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames,false));
 			tokenNamesCache.computeIfAbsent(language, l -> createTokenTypeMap(vocabulary));
 			ruleNamesCache.computeIfAbsent(language, l -> createRuleIndexMap(ruleNames));
@@ -47,7 +47,7 @@ public class PSIElementTypeFactory {
 	public static void defineLanguageIElementTypes(Language language, Vocabulary vocabulary, String[] ruleNames,boolean register)
 	{
 		synchronized (PSIElementTypeFactory.class) {
-			tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary));
+			tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary,register));
 			ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames,register));
 			tokenNamesCache.computeIfAbsent(language, l -> createTokenTypeMap(vocabulary));
 			ruleNamesCache.computeIfAbsent(language, l -> createRuleIndexMap(ruleNames));
@@ -87,9 +87,9 @@ public class PSIElementTypeFactory {
 	}
 
 	@NotNull
-	public static List<TokenIElementType> createTokenIElementTypes(Language language, Vocabulary vocabulary) {
+	public static List<TokenIElementType> createTokenIElementTypes(Language language, Vocabulary vocabulary,boolean register) {
 		return IntStream.rangeClosed(0, vocabulary.getMaxTokenType()).boxed()
-				.map(i -> new TokenIElementType(i, vocabulary.getDisplayName(i), language))
+				.map(i -> new TokenIElementType(i, vocabulary.getDisplayName(i), language,register))
 				.collect(toList());
 	}
 

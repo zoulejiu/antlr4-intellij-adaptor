@@ -20,10 +20,18 @@ public class TokenIElementType extends IElementType {
 	private final int antlrTokenType;
 
 	public TokenIElementType(int antlrTokenType,
+							 @NotNull @NonNls String debugName,
+							 @Nullable Language language,boolean register)
+	{
+		super(debugName, language, register);
+		this.antlrTokenType = antlrTokenType;
+	}
+
+	public TokenIElementType(int antlrTokenType,
 	                         @NotNull @NonNls String debugName,
 	                         @Nullable Language language)
 	{
-		super(debugName, language);
+		super(debugName, language,false);
 		this.antlrTokenType = antlrTokenType;
 	}
 
