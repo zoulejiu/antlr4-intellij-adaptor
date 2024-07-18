@@ -285,6 +285,6 @@ public class ANTLRLexerAdaptor extends com.intellij.lexer.LexerBase {
             return stateCache.get(state);
         }
         // Can happen in injected languages when startOffset != zero and initialState == zero
-        return getInitialState()
+        return getInitialState();
     }
 }
