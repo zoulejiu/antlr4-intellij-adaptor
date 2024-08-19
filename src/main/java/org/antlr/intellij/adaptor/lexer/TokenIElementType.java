@@ -18,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TokenIElementType extends IElementType {
 	private final int antlrTokenType;
-
 	public TokenIElementType(int antlrTokenType,
 							 @NotNull @NonNls String debugName,
 							 @Nullable Language language,boolean register)
