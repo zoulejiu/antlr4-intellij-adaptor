@@ -39,7 +39,7 @@ public class PSIElementTypeFactory {
 
     public static void defineLanguageIElementTypes(Language language, Vocabulary vocabulary, String[] ruleNames) {
         synchronized (PSIElementTypeFactory.class) {
-            tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary, false));
+            tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary));
             ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames, false));
             tokenNamesCache.computeIfAbsent(language, l -> createTokenTypeMap(vocabulary));
             ruleNamesCache.computeIfAbsent(language, l -> createRuleIndexMap(ruleNames));
@@ -48,7 +48,7 @@ public class PSIElementTypeFactory {
 
     public static void defineLanguageIElementTypes(Language language, Vocabulary vocabulary, String[] ruleNames, boolean register) {
         synchronized (PSIElementTypeFactory.class) {
-            tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary, register));
+            tokenIElementTypesCache.computeIfAbsent(language, l -> createTokenIElementTypes(l, vocabulary));
             ruleIElementTypesCache.computeIfAbsent(language, l -> createRuleIElementTypes(l, ruleNames, register));
             tokenNamesCache.computeIfAbsent(language, l -> createTokenTypeMap(vocabulary));
             ruleNamesCache.computeIfAbsent(language, l -> createRuleIndexMap(ruleNames));
@@ -92,9 +92,9 @@ public class PSIElementTypeFactory {
     }
 
     @NotNull
-    public static List<TokenIElementType> createTokenIElementTypes(Language language, Vocabulary vocabulary, boolean register) {
+    public static List<TokenIElementType> createTokenIElementTypes(Language language, Vocabulary vocabulary) {
         return IntStream.rangeClosed(0, vocabulary.getMaxTokenType()).boxed()
-                .map(i -> getInstance(i, vocabulary.getDisplayName(i), language, register))
+                .map(i -> getInstance(i, vocabulary.getDisplayName(i), language, true))
                 .collect(toList());
     }
 
@@ -106,22 +106,32 @@ public class PSIElementTypeFactory {
             if (tokenCache.containsKey(baseLanguage)) {
                 Map<String, TokenIElementType> tokenIElementTypeMap = tokenCache.get(baseLanguage);
                 if (tokenIElementTypeMap.containsKey(debugName)) {
-                    return tokenIElementTypeMap.get(debugName);
+                    TokenIElementType tokenIElementType = tokenIElementTypeMap.get(debugName);
+                    tokenIElementType.setAntlrTokenType(antlrTokenType);
+                    return tokenIElementType;
                 }
             }
-        }else{
-            baseLanguage=Language.ANY;
+        } else {
+            baseLanguage = Language.ANY;
         }
-        TokenIElementType tokenIElementType = new TokenIElementType(antlrTokenType, debugName, language, register);
-         if(tokenCache.containsKey(baseLanguage)) {
-             Map<String, TokenIElementType> tokenIElementTypeMap = tokenCache.get(baseLanguage);
-             tokenIElementTypeMap.put(debugName, tokenIElementType);
-         }else{
-             Map<String, TokenIElementType> tokenIElementTypeMap =  new HashMap<>();
-             tokenIElementTypeMap.put(debugName, tokenIElementType);
-             tokenCache.put(baseLanguage,tokenIElementTypeMap);
-         }
-         return tokenIElementType;
+        Language registerLanguage =null;
+        if(language!=null){
+            if(language.getBaseLanguage()!=null){
+                registerLanguage=language.getBaseLanguage();
+            }else {
+                registerLanguage=language;
+            }
+        }
+        TokenIElementType tokenIElementType = new TokenIElementType(antlrTokenType, debugName, registerLanguage, register);
+        if (tokenCache.containsKey(baseLanguage)) {
+            Map<String, TokenIElementType> tokenIElementTypeMap = tokenCache.get(baseLanguage);
+            tokenIElementTypeMap.put(debugName, tokenIElementType);
+        } else {
+            Map<String, TokenIElementType> tokenIElementTypeMap = new HashMap<>();
+            tokenIElementTypeMap.put(debugName, tokenIElementType);
+            tokenCache.put(baseLanguage, tokenIElementTypeMap);
+        }
+        return tokenIElementType;
     }
 
     @NotNull
