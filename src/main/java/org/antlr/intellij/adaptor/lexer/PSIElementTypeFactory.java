@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,11 +62,17 @@ public class PSIElementTypeFactory {
     }
 
     public static List<TokenIElementType> getTokenIElementTypes(Language language) {
-        return tokenIElementTypesCache.get(language);
+        if (tokenIElementTypesCache.containsKey(language)) {
+            return tokenIElementTypesCache.get(language);
+        }
+        return new ArrayList<>();
     }
 
     public static List<RuleIElementType> getRuleIElementTypes(Language language) {
-        return ruleIElementTypesCache.get(language);
+        if(ruleIElementTypesCache.containsKey(language)) {
+            return ruleIElementTypesCache.get(language);
+        }
+        return new ArrayList<>();
     }
 
     public static Map<String, Integer> getRuleNameToIndexMap(Language language) {
@@ -109,19 +116,19 @@ public class PSIElementTypeFactory {
                     return tokenIElementTypeMap.get(debugName);
                 }
             }
-        }else{
-            baseLanguage=Language.ANY;
+        } else {
+            baseLanguage = Language.ANY;
         }
         TokenIElementType tokenIElementType = new TokenIElementType(antlrTokenType, debugName, language, register);
-         if(tokenCache.containsKey(baseLanguage)) {
-             Map<String, TokenIElementType> tokenIElementTypeMap = tokenCache.get(baseLanguage);
-             tokenIElementTypeMap.put(debugName, tokenIElementType);
-         }else{
-             Map<String, TokenIElementType> tokenIElementTypeMap =  new HashMap<>();
-             tokenIElementTypeMap.put(debugName, tokenIElementType);
-             tokenCache.put(baseLanguage,tokenIElementTypeMap);
-         }
-         return tokenIElementType;
+        if (tokenCache.containsKey(baseLanguage)) {
+            Map<String, TokenIElementType> tokenIElementTypeMap = tokenCache.get(baseLanguage);
+            tokenIElementTypeMap.put(debugName, tokenIElementType);
+        } else {
+            Map<String, TokenIElementType> tokenIElementTypeMap = new HashMap<>();
+            tokenIElementTypeMap.put(debugName, tokenIElementType);
+            tokenCache.put(baseLanguage, tokenIElementTypeMap);
+        }
+        return tokenIElementType;
     }
 
     @NotNull
