@@ -5,9 +5,10 @@ buildscript {
 }
 
 plugins {
-    id 'org.jetbrains.intellij' version '1.16.1'
+    id 'org.jetbrains.intellij' version '1.17.3'
     id 'maven-publish'
     id 'signing'
+    id 'antlr'
 }
 
 wrapper {
@@ -39,13 +40,18 @@ repositories {
 
 dependencies {
     implementation("org.antlr:antlr4-runtime:$antlr4Version") {
-        exclude group:'com.ibm.icu', module:'icu4j'
+        exclude group: 'com.ibm.icu', module: 'icu4j'
     }
+    antlr "org.antlr:antlr4:$antlr4Version"
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.opentest4j:opentest4j:1.3.0")
 }
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier.set('sources')
+    dependsOn(':generateGrammarSource')
 }
 
 task javadocJar(type: Jar) {
@@ -80,7 +86,7 @@ publishing {
                     developer {
                         id = 'parrt'
                         name = 'Terence Parr'
-                        email = 'parrt@cs.usfca.edu'
+                        email = 'parrt@antlr.org'
                     }
                 }
                 scm {
@@ -109,7 +115,7 @@ publishing {
 
 
 javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
+    if (JavaVersion.current().isJava9Compatible()) {
         options.addBooleanOption('html5', true)
     }
 }
